@@ -15,5 +15,4 @@ public class TaskAssembler implements RepresentationModelAssembler<Task, EntityM
                 linkTo(methodOn(TaskController.class).all()).withRel("task")
                 );
     }
-
 }

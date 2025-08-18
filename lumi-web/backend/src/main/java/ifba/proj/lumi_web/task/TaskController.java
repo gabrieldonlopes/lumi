@@ -1,11 +1,18 @@
 package ifba.proj.lumi_web.task;
 
+import org.apache.coyote.BadRequestException;
+import org.springframework.beans.BeanUtils;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
+import jakarta.validation.Valid;
+import org.springframework.web.server.ResponseStatusException;
+
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
@@ -38,22 +45,23 @@ public class TaskController {
     }
 
     @PostMapping("/tasks")
-    Task newTask(@RequestBody Task newTask){
+    Task newTask(@Valid @RequestBody Task newTask){
+        LocalDateTime dateTime = newTask.getLocalDateTime();
+        List<Task> foundTasks = repository.findByLocalDateTime(dateTime);
+        if (!foundTasks.isEmpty()){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Já existe uma task nesse mesmo horário");
+        }
         return repository.save(newTask);
     }
 
     @PutMapping("/tasks/{id_task}")
-    Task replaceTask(@RequestBody Task newTask, @PathVariable Long id_task){
+    Task replaceTask(@Valid @RequestBody Task newTask, @PathVariable Long id_task){
         return repository.findById(id_task)
                 .map(task -> {
-                   task.setTitle(newTask.getTitle());
-                   task.setDescription(newTask.getDescription());
-                   task.setDuration(newTask.getDuration());
-                   return repository.save(task);
+                    BeanUtils.copyProperties(newTask, task, "id"); // copia tudo, exceto id
+                    return repository.save(task);
                 })
-                .orElseGet(() ->{
-                    return repository.save(newTask);
-                });
+                .orElseGet(() -> repository.save(newTask));
     }
 
     @DeleteMapping("/tasks/{id_task}")
