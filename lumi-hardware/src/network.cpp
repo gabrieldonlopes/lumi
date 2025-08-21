@@ -2,9 +2,9 @@
 #include <WiFi.h>
 #include <HTTPClient.h>
 
-#define WIFI_SSID "SANDRA"
+#define WIFI_SSID "SANDRA"  
 #define WIFI_PASSWORD "40302010"
-String SERVER_NAME = "http://192.168.0.131:8080/tasks";
+String SERVER_NAME = "http://172.30.37.116:8080/tasks";
 
 void connectToWiFi() {
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);

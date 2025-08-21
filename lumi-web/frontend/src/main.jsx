@@ -1,10 +1,10 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import TaskApp from './components/TaskApp.jsx'
+import TaskPage from './pages/TaskPage.jsx'
 import "./index.css"
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <TaskApp />
+    <TaskPage />
   </StrictMode>,
 )
